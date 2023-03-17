@@ -16,7 +16,7 @@ import './index.css';
 import { initialEdges, initialNodes } from './nodes-and-edges';
 
 let id = 0;
-const getId = () => `dndnode_${id++}`;
+const getId = () => `${id++}`;
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
@@ -24,12 +24,16 @@ const DnDFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+  const onConnect = useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)), []
+    );
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   }, []);
+
+  var myList = new Array();
 
   const onDrop = useCallback(
     (event) => {
@@ -71,9 +75,11 @@ const DnDFlow = () => {
       };
 
       setNodes((nds) => nds.concat(newNode));
-      for (let i = 0; i < nodes.length; i++) {
-        console.log(nodes[i]);
-    } 
+      myList.push(newNode);
+      for(var i = 0; i< myList.length; i++){
+        console.log(myList[i]);
+      }
+      
     },
     [reactFlowInstance]
   );
