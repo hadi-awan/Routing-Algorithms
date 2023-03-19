@@ -28,6 +28,31 @@ const DnDFlow = () => {
     (params) => setEdges((eds) => addEdge(params, eds)), []
     );
 
+  const onRunButtonClick = () => {
+    let edges = reactFlowInstance.getEdges();
+    console.log(edges[0].selected)
+    for(let i = 0; i < edges.length; i++){
+      if (edges[i].selected){
+        edges[i].label = 5;
+        reactFlowInstance.setEdges(edges);
+      }
+    }
+    console.log(edges[0]);
+  }
+
+  const onUpdateButtonClick = (param) =>{
+    let edges = reactFlowInstance.getEdges();
+    console.log(edges[0].selected)
+    for(let i = 0; i < edges.length; i++){
+      if (edges[i].selected){
+        edges[i].label = 3;
+        reactFlowInstance.setEdges(edges);
+      }
+    }
+    console.log(edges[0]);
+  }
+    
+
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
@@ -70,7 +95,7 @@ const DnDFlow = () => {
         id: getId(),
         type,
         position,
-        data: { label: `Node` },
+        data: { label: `${id}` },
         ...nodeDefaults,
       };
 
@@ -79,7 +104,6 @@ const DnDFlow = () => {
       for(var i = 0; i< myList.length; i++){
         console.log(myList[i]);
       }
-      
     },
     [reactFlowInstance]
   );
@@ -103,7 +127,10 @@ const DnDFlow = () => {
             <Controls />
           </ReactFlow>
         </div>
-        <Sidebar />
+        <Sidebar 
+            onRunButtonClick={onRunButtonClick}
+            onUpdateButtonClick={onUpdateButtonClick}
+        />
       </ReactFlowProvider>
     </div>
   );

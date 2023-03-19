@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default () => {
+export default (props) => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -25,7 +25,7 @@ export default () => {
       </head>
       <h3>Dijkstra's Algorithm</h3>
       <br></br>
-      <button type="button" class="btn btn-outline-success">
+      <button type="button" class="btn btn-outline-success" onClick={props.onRunButtonClick}>
               Run
       </button>
       <br></br>
@@ -39,7 +39,7 @@ export default () => {
                 aria-describedby="basic-addon2"
               />
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button">
+                <button class="btn btn-outline-secondary" type="button" onClick={props.onUpdateButtonClick}>
                   Update
                 </button>
                 
