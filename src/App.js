@@ -66,7 +66,7 @@ const DnDFlow = () => {
   function printSolution(dist)
   {
     let V = id;
-    console.log("Vertex \t\t Distance from Source<br>");
+    console.log("Vertex \t\t Distance from Source");
     for(let i = 0; i < V; i++)
     {
         console.log(i + " \t\t " + dist[i]);
