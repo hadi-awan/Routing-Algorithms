@@ -18,6 +18,7 @@ import { initialEdges, initialNodes } from './nodes-and-edges';
 let id = 0;
 const getId = () => `${id++}`;
 
+
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -25,31 +26,149 @@ const DnDFlow = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)), []
+    (params) => setEdges((eds) => addEdge(params, eds)),
+    []
     );
 
   const onRunButtonClick = () => {
     let edges = reactFlowInstance.getEdges();
-    console.log(edges[0].selected)
     for(let i = 0; i < edges.length; i++){
-      if (edges[i].selected){
-        edges[i].label = 5;
+      if(!edges[i].label){
+        edges[i].label = 1;
         reactFlowInstance.setEdges(edges);
       }
     }
-    console.log(edges[0]);
+    let arr = createGrid();
+
+  for(var i = 0; i < arr.length; i++){
+    console.log(arr[i]);
   }
+  dijkstra(arr, 0);
+
+  }
+
+  function minDistance(dist, sptSet){
+    // initialize min value
+    let min = Number.MAX_VALUE;
+    let min_index = -1;
+    let V = id; 
+
+    for(let v = 0; v < V; v++){
+      if (sptSet[v] == false && dist[v] <= min)
+        {
+            min = dist[v];
+            min_index = v;
+        }
+    }
+    return min_index;
+  }
+
+  function printSolution(dist)
+  {
+    let V = id;
+    console.log("Vertex \t\t Distance from Source<br>");
+    for(let i = 0; i < V; i++)
+    {
+        console.log(i + " \t\t " + dist[i]);
+    }
+  }
+
+  function dijkstra(graph, src)
+{
+  let V = id;
+
+    let dist = new Array(V);
+    let sptSet = new Array(V);
+     
+    // Initialize all distances as
+    // INFINITE and stpSet[] as false
+    for(let i = 0; i < V; i++)
+    {
+        dist[i] = Number.MAX_VALUE;
+        sptSet[i] = false;
+    }
+     
+    // Distance of source vertex
+    // from itself is always 0
+    dist[src] = 0;
+     
+    // Find shortest path for all vertices
+    for(let count = 0; count < V - 1; count++)
+    {
+         
+        // Pick the minimum distance vertex
+        // from the set of vertices not yet
+        // processed. u is always equal to
+        // src in first iteration.
+        let u = minDistance(dist, sptSet);
+         
+        // Mark the picked vertex as processed
+        sptSet[u] = true;
+         
+        // Update dist value of the adjacent
+        // vertices of the picked vertex.
+        for(let v = 0; v < V; v++)
+        {
+             
+            // Update dist[v] only if is not in
+            // sptSet, there is an edge from u
+            // to v, and total weight of path
+            // from src to v through u is smaller
+            // than current value of dist[v]
+            if (!sptSet[v] && graph[u][v] != 0 &&
+                   dist[u] != Number.MAX_VALUE &&
+                   dist[u] + graph[u][v] < dist[v])
+            {
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+     
+    // Print the constructed distance array
+    printSolution(dist);
+}
+
+function createGrid(){
+  var arr = new Array(id);
+  for (var i = 0; i < arr.length; i++) {
+    arr[i] = new Array(id);
+  }
+
+  for(var i = 0; i < arr.length; i++){
+    for(var j = 0; j < arr.length; j++){
+      arr[i][j] = 0;
+    }
+  }
+
+  let edges = reactFlowInstance.getEdges();
+  for(let i = 0; i < edges.length; i++){
+    // console.log(edges[i].source + " " + edges[i].target + " " + edges[i].label);
+    let source = parseInt(edges[i].source);
+    let target = parseInt(edges[i].target);
+    let val = parseInt(edges[i].label);
+
+    if(isNaN(val)){
+      val = 1;
+    }
+
+    arr[source][target] = val;
+    arr[target][source] = val;
+    // console.log(source + " " + target + " " + edges[i].label);
+
+  }
+
+  return arr;
+  
+}
 
   const onUpdateButtonClick = (param) =>{
     let edges = reactFlowInstance.getEdges();
-    console.log(edges[0].selected)
     for(let i = 0; i < edges.length; i++){
       if (edges[i].selected){
-        edges[i].label = 3;
+        edges[i].label = param;
         reactFlowInstance.setEdges(edges);
       }
     }
-    console.log(edges[0]);
   }
     
 
@@ -95,15 +214,12 @@ const DnDFlow = () => {
         id: getId(),
         type,
         position,
-        data: { label: `${id}` },
+        data: { label: `${id-1}` },
         ...nodeDefaults,
       };
 
       setNodes((nds) => nds.concat(newNode));
       myList.push(newNode);
-      for(var i = 0; i< myList.length; i++){
-        console.log(myList[i]);
-      }
     },
     [reactFlowInstance]
   );

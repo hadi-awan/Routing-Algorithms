@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 export default (props) => {
   const onDragStart = (event, nodeType) => {
@@ -6,9 +6,10 @@ export default (props) => {
     event.dataTransfer.effectAllowed = 'move';
   };
 
+  const inputRef = useRef(null);
+
   return (
     
-
     <aside>
       <head>
       <meta charset="utf-8" />
@@ -32,14 +33,19 @@ export default (props) => {
             <br></br>
       <div class="input-group mb-3" style={{ width: 200 }}>
               <input
-                type="text"
+                type="integer"
                 class="form-control"
                 placeholder="Edge Weight"
                 aria-label="Edge Weight"
                 aria-describedby="basic-addon2"
+                ref = {inputRef}
               />
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" onClick={props.onUpdateButtonClick}>
+                <button class="btn btn-outline-secondary" type="button" onClick={
+                 () => {
+                  props.onUpdateButtonClick(inputRef.current.value)
+                 }
+                } >
                   Update
                 </button>
                 
@@ -48,14 +54,8 @@ export default (props) => {
             <br></br>
             <br></br>
       <div className="description">You can drag these nodes to the pane on the right.</div>
-      <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'default')} draggable>
-        Start Node
-      </div>
       <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
         Node
-      </div>
-      <div className="dndnode output" onDragStart={(event) => onDragStart(event, 'default')} draggable>
-        End Node
       </div>
     </aside>
     
