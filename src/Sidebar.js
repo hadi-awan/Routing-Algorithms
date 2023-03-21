@@ -7,6 +7,7 @@ export default (props) => {
   };
 
   const inputRef = useRef(null);
+  console.log(props.algoResult)
 
   return (
     
@@ -57,6 +58,13 @@ export default (props) => {
       <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
         Node
       </div>
+      <br></br>
+      
+      <text style={{'white-space': 'pre-wrap'}}>{
+        props.algoResult && props.algoResult     
+      }</text>
+
+
     </aside>
     
   );

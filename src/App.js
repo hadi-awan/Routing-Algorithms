@@ -24,6 +24,7 @@ const DnDFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [algoResult, setAlgoResult] = useState(null);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -40,11 +41,11 @@ const DnDFlow = () => {
     }
     let arr = createGrid();
 
+
   for(var i = 0; i < arr.length; i++){
     console.log(arr[i]);
   }
   dijkstra(arr, 0);
-
   }
 
   function minDistance(dist, sptSet){
@@ -65,12 +66,15 @@ const DnDFlow = () => {
 
   function printSolution(dist)
   {
+
+
     let V = id;
-    console.log("Vertex \t\t Distance from Source");
+    let dataOutput = "Vertex \t Distance from Source \n";
     for(let i = 0; i < V; i++)
     {
-        console.log(i + " \t\t " + dist[i]);
+        dataOutput += (i + " \t\t " + dist[i] + "\n");
     }
+    setAlgoResult(dataOutput);
   }
 
   function dijkstra(graph, src)
@@ -95,26 +99,14 @@ const DnDFlow = () => {
     // Find shortest path for all vertices
     for(let count = 0; count < V - 1; count++)
     {
-         
-        // Pick the minimum distance vertex
-        // from the set of vertices not yet
-        // processed. u is always equal to
-        // src in first iteration.
+
         let u = minDistance(dist, sptSet);
          
-        // Mark the picked vertex as processed
         sptSet[u] = true;
          
-        // Update dist value of the adjacent
-        // vertices of the picked vertex.
         for(let v = 0; v < V; v++)
         {
              
-            // Update dist[v] only if is not in
-            // sptSet, there is an edge from u
-            // to v, and total weight of path
-            // from src to v through u is smaller
-            // than current value of dist[v]
             if (!sptSet[v] && graph[u][v] != 0 &&
                    dist[u] != Number.MAX_VALUE &&
                    dist[u] + graph[u][v] < dist[v])
@@ -220,6 +212,7 @@ function createGrid(){
 
       setNodes((nds) => nds.concat(newNode));
       myList.push(newNode);
+      
     },
     [reactFlowInstance]
   );
@@ -246,6 +239,7 @@ function createGrid(){
         <Sidebar 
             onRunButtonClick={onRunButtonClick}
             onUpdateButtonClick={onUpdateButtonClick}
+            algoResult={algoResult}
         />
       </ReactFlowProvider>
     </div>
