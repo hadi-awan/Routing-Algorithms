@@ -18,7 +18,6 @@ import { initialEdges, initialNodes } from './nodes-and-edges';
 let id = 0;
 const getId = () => `${id++}`;
 
-
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -27,67 +26,59 @@ const DnDFlow = () => {
   const [algoResult, setAlgoResult] = useState(null);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    []
-    );
+    (params) => setEdges((eds) => addEdge(params, eds)), [] 
+  );
 
   const onRunButtonClick = () => {
     let edges = reactFlowInstance.getEdges();
-    for(let i = 0; i < edges.length; i++){
+    for(let i = 0; i < edges.length; i++) {
       if(!edges[i].label){
         edges[i].label = 1;
         reactFlowInstance.setEdges(edges);
       }
     }
     let arr = createGrid();
+    let {adjacencyMatrix, startNode, endNode} = arr;
 
+    for(var i = 0; i < arr.length; i++){
+      console.log(arr[i]);
+    }
 
-  for(var i = 0; i < arr.length; i++){
-    console.log(arr[i]);
-  }
-  dijkstra(arr, 0);
-  }
+    dijkstra(adjacencyMatrix, startNode);
+  };
 
-  function minDistance(dist, sptSet){
+  function minDistance(dist, sptSet) {
     // initialize min value
     let min = Number.MAX_VALUE;
     let min_index = -1;
     let V = id; 
 
     for(let v = 0; v < V; v++){
-      if (sptSet[v] == false && dist[v] <= min)
-        {
-            min = dist[v];
-            min_index = v;
-        }
+      if (sptSet[v] == false && dist[v] <= min) {
+          min = dist[v];
+          min_index = v;
+      }
     }
     return min_index;
-  }
+  };
 
-  function printSolution(dist)
-  {
-
-
+  function printSolution(dist) {
     let V = id;
     let dataOutput = "Vertex \t Distance from Source \n";
-    for(let i = 0; i < V; i++)
-    {
-        dataOutput += (i + " \t\t " + dist[i] + "\n");
+    for(let i = 0; i < V; i++) {
+      dataOutput += (i + " \t\t " + dist[i] + "\n");
     }
     setAlgoResult(dataOutput);
-  }
+  };
 
-  function dijkstra(graph, src)
-{
-  let V = id;
-
+  function dijkstra(graph, src) {
+    let V = id;
     let dist = new Array(V);
     let sptSet = new Array(V);
      
     // Initialize all distances as
     // INFINITE and stpSet[] as false
-    for(let i = 0; i < V; i++)
-    {
+    for(let i = 0; i < V; i++) {
         dist[i] = Number.MAX_VALUE;
         sptSet[i] = false;
     }
@@ -97,15 +88,12 @@ const DnDFlow = () => {
     dist[src] = 0;
      
     // Find shortest path for all vertices
-    for(let count = 0; count < V - 1; count++)
-    {
-
+    for(let count = 0; count < V - 1; count++) {
         let u = minDistance(dist, sptSet);
          
         sptSet[u] = true;
          
-        for(let v = 0; v < V; v++)
-        {
+        for(let v = 0; v < V; v++) {
              
             if (!sptSet[v] && graph[u][v] != 0 &&
                    dist[u] != Number.MAX_VALUE &&
@@ -139,17 +127,19 @@ function createGrid(){
     let target = parseInt(edges[i].target);
     let val = parseInt(edges[i].label);
 
-    if(isNaN(val)){
+    if(isNaN(val)) {
       val = 1;
     }
 
     arr[source][target] = val;
     arr[target][source] = val;
-    // console.log(source + " " + target + " " + edges[i].label);
-
+    // console.log(source + " " + target + " " + edges[i].label)
   }
 
-  return arr;
+  const startNode = parseInt(prompt("Enter the index of the start node: "));
+  const endNode = parseInt(prompt("Enter the index of the end node: "));
+
+  return {adjacencyMatrix: arr, startNode: startNode, endNode: endNode};
   
 }
 
@@ -163,7 +153,6 @@ function createGrid(){
     }
   }
     
-
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
