@@ -7,10 +7,8 @@ export default (props) => {
   };
 
   const inputRef = useRef(null);
-  console.log(props.algoResult)
 
   return (
-    
     <aside>
       <head>
       <meta charset="utf-8" />
@@ -25,14 +23,12 @@ export default (props) => {
           crossorigin="anonymous"
         />
       </head>
-      <h3>Dijkstra's Algorithm</h3>
+      <h3 style={{ width: 400 }}>Routing Protocols</h3>
       <br></br>
-      <button type="button" class="btn btn-outline-success" onClick={props.onRunButtonClick}>
-              Run
-      </button>
+      <button type="button" class="btn btn-outline-success" onClick={props.onRunButtonClick} style={{ width: 400 }}>Run</button>
       <br></br>
-            <br></br>
-      <div class="input-group mb-3" style={{ width: 200 }}>
+      <br></br>
+      <div class="input-group mb-3" style={{ width: 400 }}>
               <input
                 type="integer"
                 class="form-control"
@@ -54,18 +50,18 @@ export default (props) => {
             </div>
             <br></br>
             <br></br>
-      <div className="description">You can drag these nodes to the pane on the right.</div>
-      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable>
+      <div className="description" style={{ width: 400 }}>You can drag these nodes to the pane on the right.</div>
+      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'default')} draggable style={{ width: 400 }}>
         Node
       </div>
       <br></br>
       
+      <div style={{ width: 1000 }}>
       <text style={{'white-space': 'pre-wrap'}}>{
         props.algoResult && props.algoResult     
       }</text>
-
+      </div>
 
     </aside>
-    
   );
 };
