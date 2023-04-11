@@ -56,9 +56,16 @@ export default (props) => {
       </div>
       <br></br>
       
+
       <div style={{ width: 1000 }}>
+        <h4>Dijkstra</h4>
       <text style={{'white-space': 'pre-wrap'}}>{
-        props.algoResult && props.algoResult     
+        props.algoResultDijkstra && props.algoResultDijkstra     
+      }</text>
+      <br></br><br></br><br></br>
+      <h4>Distance Vector</h4>
+      <text style={{'white-space': 'pre-wrap'}}>{
+        props.algoResultDistanceVector && props.algoResultDistanceVector     
       }</text>
       </div>
 

@@ -24,7 +24,8 @@ const DnDFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const [algoResult, setAlgoResult] = useState(null);
+  const [algoResultDijkstra, setAlgoResultDijkstra] = useState(null);
+  const [algoResultDistanceVector, setAlgoResultDistanceVector] = useState(null);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)), [] 
@@ -41,7 +42,145 @@ const DnDFlow = () => {
     let arr = createGrid();
     let {adjacencyMatrix, startNode} = arr;
     dijkstra(adjacencyMatrix, startNode);
+    let network = create_network(adjacencyMatrix);
+    let dv = distance_vector(network);
+    let dist = calculate_distance(adjacencyMatrix, startNode);
+    printSolutionDistanceVector(dist, dv);
   };
+
+  function minDistance(dist, sptSet) {
+    // initialize min value
+    let min = Number.MAX_VALUE;
+    let min_index = -1;
+    let V = id; 
+
+    for(let v = 0; v < V; v++){
+      if (sptSet[v] == false && dist[v] <= min) {
+          min = dist[v];
+          min_index = v;
+      }
+    }
+    return min_index;
+  };
+
+  function printSolutionDistanceVector(dist, dv) {
+    let V = id;
+    let dataOutput = "Vertex \t Distance from Source \n";
+    for(let i = 0; i < V; i++) {
+      dataOutput += (i + " \t\t " + dist[i] + "\n");
+    }
+    dataOutput += "\nDistance Vector Routing Table\n\n \t";
+    
+    let len = Object.keys(dv).length;
+    for (let i = 0; i<len; i++){
+      dataOutput+= (Object.keys(dv)[i] + "\t");
+    }
+    dataOutput+="\n"
+    for(let i = 0; i < len; i++){
+      dataOutput+= (Object.keys(dv)[i] + "\t");
+        for(let j = 0; j < len; j++){
+          if (dv[i][j] == undefined || dv[i][j] == "Infinity")
+            dataOutput += ("-"+ "\t")
+          else
+            dataOutput += (dv[i][j]+ "\t")
+        }
+      dataOutput+= ("\n");
+    }
+    setAlgoResultDistanceVector(dataOutput);
+  };
+
+  function calculate_distance(graph, src) {
+    let V = id;
+    let dist = new Array(V);
+    let sptSet = new Array(V);
+     
+    // Initialize all distances as
+    // INFINITE and stpSet[] as false
+    for(let i = 0; i < V; i++) {
+        dist[i] = Number.MAX_VALUE;
+        sptSet[i] = false;
+    }
+     
+    // Distance of source vertex
+    // from itself is always 0
+    dist[src] = 0;
+     
+    // Find shortest path for all vertices
+    for(let count = 0; count < V - 1; count++) {
+        let u = minDistance(dist, sptSet);
+         
+        sptSet[u] = true;
+         
+        for(let v = 0; v < V; v++) {
+             
+            if (!sptSet[v] && graph[u][v] != 0 &&
+                   dist[u] != Number.MAX_VALUE &&
+                   dist[u] + graph[u][v] < dist[v])
+            {
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+     
+    // Print the constructed distance array
+    return dist;
+};
+
+function distance_vector(network, max_iterations=100) {
+  // Initialize distance vector for each node
+  let distance_vectors = {};
+  for (let node in network) {
+    distance_vectors[node] = {};
+    for (let neighbour in network[node]) {
+      distance_vectors[node][neighbour] = network[node][neighbour];
+    }
+    for (let other_node in network) {
+      if (other_node != node && !(other_node in network[node])) {
+        distance_vectors[node][other_node] = Infinity;
+      }
+    }
+  }
+
+  // Iteratively update distance vectors
+  for (let i = 0; i < max_iterations; i++) {
+    let converged = true;
+    for (let node in network) {
+      // Update distance vector for node
+      let old_distance_vector = Object.assign({}, distance_vectors[node]);
+      for (let neighbour in network[node]) {
+        for (let dest in distance_vectors) {
+          if (dest != node && dest != neighbour) {
+            let new_cost = distance_vectors[node][neighbour] +
+                           distance_vectors[neighbour][dest];
+            if (new_cost < distance_vectors[node][dest]) {
+              distance_vectors[node][dest] = new_cost;
+            }
+          }
+        }
+      }
+      if (!Object.is(distance_vectors[node], old_distance_vector)) {
+        converged = false;
+      }
+    }
+    if (converged) {
+      break;
+    }
+  }
+  return distance_vectors;
+};
+
+function create_network(arr){
+  let nodes = {}
+  for (let i = 0; i < arr.length; i++) {
+    let edges = {}
+    for (let j = 0; j < arr[i].length; j++) {
+      if (arr[i][j] !== 0)
+        edges[j] = arr[i][j]
+    }
+    nodes[i] = edges
+  }
+  return nodes;
+};
 
   function printSolutionDijkstra(graph, dist, visited, src, step) {
     let result = "";
@@ -123,7 +262,7 @@ const DnDFlow = () => {
       result += printSolutionDijkstra(graph, dist, visited, src, step);
       step += 1;
     }
-    setAlgoResult(result);
+    setAlgoResultDijkstra(result);
   };
 
   function createGrid(){
@@ -245,7 +384,9 @@ const DnDFlow = () => {
         <Sidebar 
             onRunButtonClick={onRunButtonClick}
             onUpdateButtonClick={onUpdateButtonClick}
-            algoResult={algoResult}
+            
+            algoResultDijkstra={algoResultDijkstra}
+            algoResultDistanceVector={algoResultDistanceVector}
         />
         </div>
     </div>
