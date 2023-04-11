@@ -79,8 +79,12 @@ const DnDFlow = () => {
     for(let i = 0; i < len; i++){
       dataOutput+= (Object.keys(dv)[i] + "\t");
         for(let j = 0; j < len; j++){
-          if (dv[i][j] == undefined || dv[i][j] == "Infinity")
-            dataOutput += ("-"+ "\t")
+          if (i==j){
+            dataOutput += ("0"+ "\t")
+          }
+          
+          else if (dv[i][j] == undefined || dv[i][j] == "Infinity")
+            dataOutput += ("∞"+ "\t")
           else
             dataOutput += (dv[i][j]+ "\t")
         }
